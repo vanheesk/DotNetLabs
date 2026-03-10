@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <!-- TODO Exercise 3: Add container publishing properties -->
+  <!-- <PropertyGroup>
+    <ContainerImageName>lab-aspnet-9</ContainerImageName>
+    <ContainerImageTag>latest</ContainerImageTag>
+  </PropertyGroup> -->
+
+  <!-- TODO Exercise 5 (Bonus): Enable NativeAOT -->
+  <!-- <PropertyGroup>
+    <PublishAot>true</PublishAot>
+  </PropertyGroup> -->
+
+  <ItemGroup>
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.1" />
+  </ItemGroup>
+
+</Project>

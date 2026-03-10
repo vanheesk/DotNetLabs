@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="Lab-AspNet-10.AppHost/Lab-AspNet-10.AppHost.csproj" />
+  <Project Path="Lab-AspNet-10.ServiceDefaults/Lab-AspNet-10.ServiceDefaults.csproj" />
+  <Project Path="Lab-AspNet-10.ApiService/Lab-AspNet-10.ApiService.csproj" />
+  <Project Path="Lab-AspNet-10.CatalogService/Lab-AspNet-10.CatalogService.csproj" />
+</Solution>

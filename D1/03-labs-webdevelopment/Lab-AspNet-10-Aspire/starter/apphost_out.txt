@@ -1,0 +1,17 @@
+Using launch settings from Lab-AspNet-10.AppHost\Properties\launchSettings.json...
+info: Aspire.Hosting.DistributedApplication[0]
+      Aspire version: 13.1.2+895a2f0b09d747a052aaaf0273d55ad0e2dc95b0
+info: Aspire.Hosting.DistributedApplication[0]
+      Distributed application starting.
+info: Aspire.Hosting.DistributedApplication[0]
+      Application host directory is: C:\Users\krist\OneDrive\Documenten\@Work\Xpirit\Training .NET\FSMA\Dag 1\3 - Web Development with ASPNET Core\labs\Lab-AspNet-10-Aspire\starter\Lab-AspNet-10.AppHost
+info: Microsoft.AspNetCore.DataProtection.KeyManagement.XmlKeyManager[63]
+      User profile is available. Using 'C:\Users\krist\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+info: Aspire.Hosting.Dcp.DcpHost[0]
+      Starting DCP with arguments: start-apiserver --monitor 11208 --detach --kubeconfig "C:\Users\krist\AppData\Local\Temp\aspire-dcphjucsz3w.zab\kubeconfig"
+info: Aspire.Hosting.DistributedApplication[0]
+      Distributed application started. Press Ctrl+C to shut down.
+info: Aspire.Hosting.DistributedApplication[0]
+      Now listening on: http://localhost:17139
+info: Aspire.Hosting.DistributedApplication[0]
+      Login to the dashboard at http://localhost:17139/login?t=19d32edd52fca2c17ffc39c1d7a6d3f5
