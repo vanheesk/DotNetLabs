@@ -1,234 +1,324 @@
-# Lab 01: Introduction to Minimal APIs â€” Building a Pie Shop API
+# Lab 01: Pie Shop API Kickstart
 
 ## Lab Overview
 
-In Module 2.1, you built the **Pie Shop** as a server-rendered MVC application. You even added a few Minimal API endpoints alongside MVC in Lab 03. Now it is time to build a **dedicated Pie Shop API** from scratch using Minimal APIs â€” the modern, lightweight approach to building HTTP APIs in ASP.NET Core.
+In Day 1, you built Minimal API projects from scratch, learned routing, middleware, filters, OpenAPI, and JWT auth. You already know the fundamentals.
 
-This lab is designed as a foundation. In later labs, we will extend the same project with:
+This lab **skips the basics** and fast-tracks you to a working **Pie Shop API** that will serve as the foundation for the remaining labs in this module. You will focus on concepts that are new or go deeper than Day 1:
 
-- Full CRUD with typed responses
-- Filters and middleware
-- OpenAPI documentation
-- Authentication & authorization
+- `TypedResults` and `Results<T1, T2>` union return types
+- `[AsParameters]` for clean query binding
+- .NET 10 built-in validation with `AddValidation()`
+- Response customization (CSV export, custom XML result)
+
+> **Estimated time:** 45 minutes
 
 ## Learning Objectives
 
 By the end of this lab, you will be able to:
 
-- Explain what Minimal APIs are and when to use them
-- Create a Minimal API project using Visual Studio or the dotnet CLI
-- Define HTTP endpoints directly in `Program.cs`
-- Use dependency injection per endpoint
-- Enable and observe built-in validation in .NET 10
-- Organize endpoints using route groups
+- Scaffold a full CRUD Minimal API using the Pie Shop domain
+- Return semantically correct HTTP responses using `TypedResults`
+- Bind complex query parameters with `[AsParameters]`
+- Enable automatic model validation with .NET 10's `AddValidation()`
+- Return custom content types (CSV file downloads, XML responses)
 
 ## Prerequisites
 
 - .NET 10 SDK installed
-- Visual Studio 2022+ or .NET CLI
-- Completed Module 2.1 (conceptual understanding of ASP.NET Core and the Pie Shop domain)
+- Completed Day 1 web development labs (Minimal API fundamentals, routing, DI)
+- Familiarity with the Pie Shop domain from Module 2.1 (MVC labs)
 
-> **Starter solutions available.** Each part has a matching starter project in the `lab01/` folder.
-> If you get stuck, copy the relevant folder and continue from there.
-> For example, to start Part 5 from a known-good state:
+> **Starter and solution projects are available.** If you get stuck, use the reference solution:
 > ```shell
-> cp -r lab01/part04-complete/PieShopApi .
+> cp -r lab01/lab01-complete/PieShopApi .
 > cd PieShopApi && dotnet run
 > ```
 
 ---
 
-## Part 1 â€” What Are Minimal APIs?
+## Part 1 — Project Setup & Domain Model
 
-Minimal APIs are a lightweight HTTP stack introduced in .NET 6 that allow you to define API endpoints without controllers, attributes, or boilerplate.
+> **Starting point:** `lab01/start/PieShopApi/`
 
-Key characteristics:
+The starter project contains an empty `Program.cs` with `WebApplication` scaffolding, plus pre-defined model files.
 
-- Explicit routing via `MapGet`, `MapPost`, etc.
-- Full middleware and DI support
-- Best path for Native AOT Web APIs
+### 1a — Review the Domain Models
 
-In Module 2.1 Lab 03 you added a few Minimal API endpoints to the MVC Pie Shop. In this lab, you will build a **standalone** Pie Shop API using only Minimal APIs.
+Open the `Models/` folder. You will find:
 
----
+- `Pie.cs` — the core entity
+- `Category.cs` — grouping for pies
+- `CreatePieRequest.cs` — DTO for creating a pie (with validation attributes)
+- `UpdatePieRequest.cs` — DTO for updating a pie
+- `PieQuery.cs` — query parameters for filtering/paging
 
-## Part 2 â€” Create a Minimal API Project
+Review each file. Notice the validation attributes on the request DTOs — these will be used in Part 4.
 
-### Option A: Visual Studio
+### 1b — Review the Repository
 
-1. Create a new project
-2. Select **ASP.NET Core Web API**
-3. Target **.NET 10**
-4. Check **Do not use controllers**
+Open `Services/IPieRepository.cs` and `Services/InMemoryPieRepository.cs`.
 
-### Option B: .NET CLI
+The in-memory repository is pre-wired with seed data so you have pies to query immediately.
 
-```shell
-dotnet new webapi --use-minimal-apis -n PieShopApi
-cd PieShopApi
-dotnet run
-```
+### 1c — Wire Up DI and Validation
 
-> Verify the app runs and returns a response on the default endpoint.
-
----
-
-## Part 3 â€” Understanding Program.cs
-
-Open `Program.cs`. You should see:
-
-1. Application host creation
-2. Dependency registration
-3. Middleware setup
-4. Endpoint mapping
-5. `app.Run()`
-
----
-
-## Part 4 â€” Your First Minimal API Endpoint
-
-> **Falling behind?** Start from `lab01/start/PieShopApi/`.
-
-Add a simple endpoint:
-
-```csharp
-app.MapGet("/ping", () => "pong");
-```
-
-Run the app and browse to:
-
-```
-GET /ping
-```
-
-> You have just defined an API endpoint without controllers or attributes.
-
----
-
-## Part 5 â€” Dependency Injection per Endpoint
-
-> **Falling behind?** Start from `lab01/part04-complete/PieShopApi/`.
-
-Minimal APIs allow you to inject only what an endpoint needs.
-
-```csharp
-app.MapGet("/time", (ILogger<Program> logger) =>
-{
-    logger.LogInformation("Time endpoint called");
-    return DateTime.UtcNow;
-});
-```
-
-- No constructor injection required
-- No unused dependencies
-- Easier testing
-
-This is one of the key differences compared to controller-based APIs.
-
----
-
-## Part 6 â€” Adding a POST Endpoint with Validation (.NET 10)
-
-> **Falling behind?** Start from `lab01/part05-complete/PieShopApi/`.
-
-### Enable Validation
-
-In `Program.cs`:
+In `Program.cs`, register the repository and enable .NET 10 validation:
 
 ```csharp
 builder.Services.AddValidation();
+builder.Services.AddSingleton<IPieRepository, InMemoryPieRepository>();
 ```
 
-### Define a Request Model
+> You registered services and used DI in Day 1. Here we just need it wired up to move forward.
+
+---
+
+## Part 2 — Full CRUD with TypedResults
+
+In Day 1, you used `Results.Ok()` and `Results.NotFound()`. Now you will use **`TypedResults`** — the strongly-typed equivalent that enables better OpenAPI metadata and compile-time safety.
+
+### Key Difference
+
+| Day 1 | Today |
+|-------|-------|
+| `Results.Ok(pie)` returns `IResult` | `TypedResults.Ok(pie)` returns `Ok<Pie>` |
+| Return type: `IResult` | Return type: `Results<Ok<Pie>, NotFound>` |
+
+The `Results<T1, T2>` union type tells the framework (and OpenAPI) exactly which responses are possible.
+
+### 2a — GET All Pies
 
 ```csharp
-public sealed record CreatePieRequest(
-    [Required, StringLength(100, MinimumLength = 3)] string Name,
-    [StringLength(200)] string? ShortDescription,
-    [Range(0.01, 1000)] decimal Price);
-```
+var pieGroup = app.MapGroup("/pies");
 
-### Map the Endpoint
-
-```csharp
-app.MapPost("/pies", (CreatePieRequest request) =>
+pieGroup.MapGet("/", (IPieRepository repo) =>
 {
-    return Results.Created($"/pies/{Guid.NewGuid()}", request);
-});
+    return TypedResults.Ok(repo.GetAll());
+})
+.WithName("Pies_GetAll");
 ```
 
-### Try Invalid Input
+### 2b — GET Pie by ID
 
-Send invalid JSON (e.g. missing `Name`).
+Implement this yourself. Requirements:
 
-- The request fails before the handler runs
-- HTTP 400 with `ProblemDetails` is returned automatically
+- Route: `/{id:int:min(1)}`
+- Return type: `Results<Ok<Pie>, NotFound>`
+- Return `TypedResults.NotFound()` when the pie doesn't exist
+- Add `.WithName("Pies_GetById")`
 
-### Experiment
+### 2c — POST Create Pie
 
-1. Remove `AddValidation()`
-2. Repeat the request
-3. Observe the difference
+Implement this yourself. Requirements:
+
+- Accept a `CreatePieRequest` body
+- Map it to a `Pie` and add via `repo.Add(pie)`
+- Return `TypedResults.CreatedAtRoute(pie, "Pies_GetById", new { id = pie.PieId })`
+
+### 2d — PUT Update Pie
+
+Implement this yourself. Requirements:
+
+- Route: `/{id:int:min(1)}`
+- Accept an `UpdatePieRequest` body
+- Return the updated pie or `NotFound`
+
+### 2e — DELETE Pie
+
+Implement this yourself. Requirements:
+
+- Route: `/{id:int:min(1)}`
+- Return `TypedResults.NoContent()` on success, `TypedResults.NotFound()` on failure
+- Return type: `Results<NoContent, NotFound>`
+
+> **Checkpoint:** Run the app. Test all five CRUD endpoints using `curl`, `.http` files, or Postman. Verify correct HTTP status codes (200, 201, 204, 404).
 
 ---
 
-## Part 7 â€” Organizing Endpoints with Route Groups
+## Part 3 — Query Binding with [AsParameters]
 
-> **Falling behind?** Start from `lab01/part06-complete/PieShopApi/`.
+Enhance `GET /pies` to support filtering, sorting, and paging using the `PieQuery` record.
 
-As APIs grow, a single-file approach becomes harder to maintain.
+### 3a — Apply [AsParameters]
 
-Introduce a route group:
+Replace the simple `GET /` handler with:
 
 ```csharp
-var pies = app.MapGroup("/pies");
+pieGroup.MapGet("/", ([AsParameters] PieQuery query, IPieRepository repo) =>
+{
+    var result = repo.GetAll();
 
-pies.MapGet("/", () => "List pies");
-pies.MapPost("/", (CreatePieRequest request) => Results.Ok(request));
+    // TODO: Apply filtering, sorting, and paging
+    // Use query.Filter, query.OrderBy, query.Page, query.PageSize
+
+    return TypedResults.Ok(result);
+})
+.WithName("Pies_GetAll");
 ```
 
-- Clear structure
-- Shared metadata
-- Easier extension later
+### 3b — Implement the Logic
+
+Add the following behavior (try it yourself before looking at the hints):
+
+1. **Filter** — if `query.Filter` is not empty, filter pies whose `Name` contains the value (case-insensitive)
+2. **Sort** — support `name`, `price`, and `price,desc` as `OrderBy` values
+3. **Page** — skip `(Page - 1) * PageSize` items and take `PageSize` items
+
+<details>
+<summary>Hint: Filtering</summary>
+
+```csharp
+if (!string.IsNullOrEmpty(query.Filter))
+    result = result.Where(p => p.Name.Contains(query.Filter, StringComparison.OrdinalIgnoreCase));
+```
+</details>
+
+<details>
+<summary>Hint: Sorting</summary>
+
+```csharp
+result = query.OrderBy?.ToLower() switch
+{
+    "name" => result.OrderBy(p => p.Name),
+    "price" => result.OrderBy(p => p.Price),
+    "price,desc" => result.OrderByDescending(p => p.Price),
+    _ => result
+};
+```
+</details>
+
+### Test
+
+```
+GET /pies?filter=apple&orderBy=price&page=1&pageSize=5
+```
+
+> **Checkpoint:** Filtering, sorting, and paging all work correctly. Default values apply when parameters are omitted.
 
 ---
 
-## Part 8 â€” Native AOT Awareness (Conceptual)
+## Part 4 — Validation in Action
 
-Minimal APIs are the preferred Web API model for Native AOT in ASP.NET Core.
+You already added `builder.Services.AddValidation()` in Part 1. Now test it.
 
-- Smaller executables
-- Faster cold starts
-- Some dynamic features are restricted
+### 4a — Send Invalid Input
 
-> We are not enabling AOT yet. This will be covered in a later lab.
+POST to `/pies` with invalid data:
+
+```json
+{
+  "name": "",
+  "price": -5
+}
+```
+
+Expected: a `400 Bad Request` with `ProblemDetails` — the request never reaches your handler.
+
+### 4b — Understand What Happened
+
+- `AddValidation()` automatically validates parameters annotated with `[Required]`, `[Range]`, `[StringLength]`, etc.
+- No manual validation code needed in your endpoints
+- This is new in .NET 10 — in Day 1 you may have validated manually
+
+### 4c — Experiment
+
+1. Comment out `builder.Services.AddValidation()`
+2. Send the same invalid request
+3. Observe: the request now reaches your handler with invalid data
+4. Re-enable validation
+
+> **Checkpoint:** You can explain how `AddValidation()` short-circuits invalid requests automatically.
+
+---
+
+## Part 5 — Response Customization
+
+Your API only returns JSON so far. Add two alternative response formats.
+
+### 5a — CSV Export
+
+Add an endpoint that exports all pies as a downloadable CSV file:
+
+```csharp
+pieGroup.MapGet("/export", (IPieRepository repo) =>
+{
+    var csv = new StringBuilder("PieId,Name,ShortDescription,Price,IsPieOfTheWeek,CategoryId\n");
+    foreach (var pie in repo.GetAll())
+    {
+        csv.AppendLine($"{pie.PieId},{pie.Name},{pie.ShortDescription},{pie.Price},{pie.IsPieOfTheWeek},{pie.CategoryId}");
+    }
+    var bytes = Encoding.UTF8.GetBytes(csv.ToString());
+    return Results.File(bytes, "text/csv", "pies.csv");
+})
+.WithName("Pies_Export");
+```
+
+### 5b — Custom XML Result
+
+Create a `XmlResult<T>` class that implements `IResult` and serializes the response as XML.
+
+Try implementing it yourself first. Requirements:
+- Set `Content-Type` to `application/xml`
+- Use `DataContractSerializer` to serialize the value
+- Accept a configurable status code (default 200)
+
+<details>
+<summary>Hint: XmlResult implementation</summary>
+
+```csharp
+using System.Runtime.Serialization;
+
+public class XmlResult<T>(T value, int statusCode = 200) : IResult
+{
+    public async Task ExecuteAsync(HttpContext httpContext)
+    {
+        httpContext.Response.StatusCode = statusCode;
+        httpContext.Response.ContentType = "application/xml";
+
+        var serializer = new DataContractSerializer(typeof(T));
+        await using var ms = new MemoryStream();
+        serializer.WriteObject(ms, value);
+        ms.Position = 0;
+        await ms.CopyToAsync(httpContext.Response.Body);
+    }
+}
+```
+</details>
+
+### 5c — Add an XML Endpoint
+
+```csharp
+pieGroup.MapGet("/{id:int:min(1)}/xml", (int id, IPieRepository repo) =>
+{
+    var pie = repo.GetById(id);
+    return pie is null
+        ? Results.NotFound()
+        : new XmlResult<Pie>(pie);
+})
+.WithName("Pies_GetByIdXml");
+```
+
+> **Checkpoint:** `/pies/export` downloads a CSV file. `/pies/1/xml` returns XML. Both alongside standard JSON endpoints.
 
 ---
 
 ## Lab Checkpoint
 
-By now, you should have:
+Your Pie Shop API now has:
 
-- A running Pie Shop Minimal API
-- Multiple endpoints (GET + POST)
-- Validation enabled
-- Route groups in place
-- A clean, understandable `Program.cs`
+- ✅ Full CRUD with `TypedResults` and union return types
+- ✅ Query binding with `[AsParameters]` for filtering, sorting, paging
+- ✅ Automatic validation via `AddValidation()`
+- ✅ CSV export and XML response support
+- ✅ Clean `Program.cs` with route groups and DI
 
----
-
-## Reflection Questions
-
-1. How do Minimal APIs compare to the MVC controllers you built in Module 2.1?
-2. When would you choose Minimal APIs over controllers?
-3. How does per-endpoint DI affect testability?
+This is the baseline for **Lab 02** (EF Core, output caching, resilience) and **Lab 03** (gRPC inter-service communication).
 
 ---
 
 ## Lab Complete
 
-You have completed the **Introduction to Minimal APIs** lab.
+> **Reference solution:** `lab01/lab01-complete/PieShopApi/` contains the final state of this lab.
 
-> **Reference solution:** `lab01/part07-complete/PieShopApi/` contains the final state of this lab.
-
-In the next lab, we will build on this project to create a full CRUD Pie Shop API.
+In the next lab, you will replace the in-memory repository with EF Core and add output caching, resilience, and rate limiting to make the API production-ready.

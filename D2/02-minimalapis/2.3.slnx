@@ -1,0 +1,60 @@
+<Solution>
+  <Folder Name="/lab01/" />
+  <Folder Name="/lab01/lab01-complete/">
+    <Project Path="lab01/lab01-complete/PieShopApi/PieShopApi.csproj" />
+  </Folder>
+  <Folder Name="/lab01/start/">
+    <Project Path="lab01/start/PieShopApi/PieShopApi.csproj" />
+  </Folder>
+  <Folder Name="/lab02/" />
+  <Folder Name="/lab02/start/">
+    <Project Path="lab02/start/PieShopApi/PieShopApi.csproj" />
+  </Folder>
+  <Folder Name="/lab02/step01-complete/">
+    <Project Path="lab02/step01-complete/PieShopApi/PieShopApi.csproj" />
+  </Folder>
+  <Folder Name="/lab02/step02-complete/">
+    <Project Path="lab02/step02-complete/PieShopApi/PieShopApi.csproj" />
+  </Folder>
+  <Folder Name="/lab02/step03-complete/">
+    <Project Path="lab02/step03-complete/PieShopApi/PieShopApi.csproj" />
+  </Folder>
+  <Folder Name="/lab02/step04-complete/">
+    <Project Path="lab02/step04-complete/PieShopApi/PieShopApi.csproj" />
+  </Folder>
+  <Folder Name="/lab02/step05-complete/">
+    <Project Path="lab02/step05-complete/PieShopApi/PieShopApi.csproj" />
+  </Folder>
+  <Folder Name="/lab02/step06-complete/">
+    <Project Path="lab02/step06-complete/PieShopApi/PieShopApi.csproj" />
+  </Folder>
+  <Folder Name="/lab03/" />
+  <Folder Name="/lab03/start/">
+    <Project Path="lab03/start/PieShop.Grpc/PieShop.Grpc.csproj" />
+    <Project Path="lab03/start/PieShopApi/PieShopApi.csproj" />
+  </Folder>
+  <Folder Name="/lab03/step01-complete/">
+    <Project Path="lab03/step01-complete/PieShop.Grpc/PieShop.Grpc.csproj" />
+    <Project Path="lab03/step01-complete/PieShopApi/PieShopApi.csproj" />
+  </Folder>
+  <Folder Name="/lab03/step02-complete/">
+    <Project Path="lab03/step02-complete/PieShop.Grpc/PieShop.Grpc.csproj" />
+    <Project Path="lab03/step02-complete/PieShopApi/PieShopApi.csproj" />
+  </Folder>
+  <Folder Name="/lab03/step03-complete/">
+    <Project Path="lab03/step03-complete/PieShop.Grpc/PieShop.Grpc.csproj" />
+    <Project Path="lab03/step03-complete/PieShopApi/PieShopApi.csproj" />
+  </Folder>
+  <Folder Name="/lab03/step04-complete/">
+    <Project Path="lab03/step04-complete/PieShop.Grpc/PieShop.Grpc.csproj" />
+    <Project Path="lab03/step04-complete/PieShopApi/PieShopApi.csproj" />
+  </Folder>
+  <Folder Name="/lab03/step05-complete/">
+    <Project Path="lab03/step05-complete/PieShop.Grpc/PieShop.Grpc.csproj" />
+    <Project Path="lab03/step05-complete/PieShopApi/PieShopApi.csproj" />
+  </Folder>
+  <Folder Name="/lab03/step06-complete/">
+    <Project Path="lab03/step06-complete/PieShop.Grpc/PieShop.Grpc.csproj" />
+    <Project Path="lab03/step06-complete/PieShopApi/PieShopApi.csproj" />
+  </Folder>
+</Solution>

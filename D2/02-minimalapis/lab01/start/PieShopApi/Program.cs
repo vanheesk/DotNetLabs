@@ -1,6 +1,9 @@
 var builder = WebApplication.CreateBuilder(args);
+
+// TODO: Register validation and DI services here
+
 var app = builder.Build();
 
-app.MapGet("/", () => "Hello World!");
+// TODO: Define route groups and CRUD endpoints here
 
 app.Run();

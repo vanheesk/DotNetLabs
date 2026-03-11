@@ -1,41 +1,93 @@
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.EntityFrameworkCore;
+using PieShopApi.Data;
+using PieShopApi.Models;
+
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddValidation();
+builder.Services.AddDbContext<PieShopDbContext>(options =>
+    options.UseSqlite("Data Source=pieshop.db"));
 var app = builder.Build();
 
-var pies = new List<Pie>();
-var nextId = 1;
+var pieGroup = app.MapGroup("/pies");
 
-app.MapGet("/pies", () => pies);
-
-app.MapGet("/pies/{id}", (int id) =>
+pieGroup.MapGet("/", async ([AsParameters] PieQuery query, PieShopDbContext db) =>
 {
-    var pie = pies.FirstOrDefault(p => p.PieId == id);
-    return pie is null ? Results.NotFound() : Results.Ok(pie);
-});
+    IQueryable<PieEntity> pies = db.Pies;
 
-app.MapPost("/pies", (Pie pie) =>
-{
-    pie = pie with { PieId = nextId++ };
-    pies.Add(pie);
-    return Results.Created($"/pies/{pie.PieId}", pie);
-});
+    if (!string.IsNullOrEmpty(query.Filter))
+        pies = pies.Where(p => p.Name.Contains(query.Filter));
 
-app.MapPut("/pies/{id}", (int id, Pie updated) =>
-{
-    var index = pies.FindIndex(p => p.PieId == id);
-    if (index == -1) return Results.NotFound();
-    pies[index] = updated with { PieId = id };
-    return Results.Ok(pies[index]);
-});
+    if (!string.IsNullOrEmpty(query.OrderBy))
+    {
+        pies = query.OrderBy.ToLower() switch
+        {
+            "name" => pies.OrderBy(p => p.Name),
+            "price" => pies.OrderBy(p => p.Price),
+            "price,desc" => pies.OrderByDescending(p => p.Price),
+            _ => pies
+        };
+    }
 
-app.MapDelete("/pies/{id}", (int id) =>
+    var results = await pies
+        .Skip((query.Page - 1) * query.PageSize)
+        .Take(query.PageSize)
+        .ToListAsync();
+
+    return TypedResults.Ok(results);
+})
+.WithName("Pies_GetAll");
+
+pieGroup.MapGet("/{id:int:min(1)}", async Task<Results<Ok<PieEntity>, NotFound>> (int id, PieShopDbContext db) =>
 {
-    var index = pies.FindIndex(p => p.PieId == id);
-    if (index == -1) return Results.NotFound();
-    pies.RemoveAt(index);
-    return Results.NoContent();
-});
+    var pie = await db.Pies.FindAsync(id);
+    return pie is null
+        ? TypedResults.NotFound()
+        : TypedResults.Ok(pie);
+})
+.WithName("Pies_GetById");
+
+pieGroup.MapPost("/", async (CreatePieRequest request, PieShopDbContext db) =>
+{
+    var entity = new PieEntity
+    {
+        Name = request.Name,
+        ShortDescription = request.ShortDescription,
+        Price = request.Price,
+        IsPieOfTheWeek = request.IsPieOfTheWeek,
+        CategoryId = request.CategoryId
+    };
+    db.Pies.Add(entity);
+    await db.SaveChangesAsync();
+    return TypedResults.CreatedAtRoute(entity, "Pies_GetById", new { id = entity.PieId });
+})
+.WithName("Pies_Create");
+
+pieGroup.MapPut("/{id:int:min(1)}", async Task<Results<Ok<PieEntity>, NotFound>> (int id, UpdatePieRequest request, PieShopDbContext db) =>
+{
+    var entity = await db.Pies.FindAsync(id);
+    if (entity is null) return TypedResults.NotFound();
+
+    entity.Name = request.Name;
+    entity.ShortDescription = request.ShortDescription;
+    entity.Price = request.Price;
+    entity.IsPieOfTheWeek = request.IsPieOfTheWeek;
+    entity.CategoryId = request.CategoryId;
+    await db.SaveChangesAsync();
+
+    return TypedResults.Ok(entity);
+})
+.WithName("Pies_Update");
+
+pieGroup.MapDelete("/{id:int:min(1)}", async Task<Results<NoContent, NotFound>> (int id, PieShopDbContext db) =>
+{
+    var entity = await db.Pies.FindAsync(id);
+    if (entity is null) return TypedResults.NotFound();
+
+    db.Pies.Remove(entity);
+    await db.SaveChangesAsync();
+    return TypedResults.NoContent();
+})
+.WithName("Pies_Delete");
 
 app.Run();
-
-public record Pie(int PieId, string Name, string? ShortDescription, decimal Price, bool IsPieOfTheWeek, int CategoryId);
