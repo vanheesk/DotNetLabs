@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:PieShopMaui.ViewModels"
+             xmlns:models="clr-namespace:PieShopMaui.Models"
+             x:Class="PieShopMaui.Views.PieListPage"
+             x:DataType="vm:PieListViewModel"
+             Title="Our Pies">
+
+    <Grid RowDefinitions="Auto,*" Padding="10">
+        <Button Text="+ Add New Pie"
+                Command="{Binding GoToAddCommand}"
+                BackgroundColor="#28a745"
+                TextColor="White"
+                Margin="0,0,0,10" />
+
+        <ActivityIndicator Grid.Row="1"
+                           IsRunning="{Binding IsLoading}"
+                           IsVisible="{Binding IsLoading}"
+                           HorizontalOptions="Center" />
+
+        <CollectionView Grid.Row="1"
+                        ItemsSource="{Binding Pies}"
+                        SelectionMode="None">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:Pie">
+                    <Border Padding="15" Margin="0,5"
+                            Stroke="LightGray"
+                            StrokeShape="RoundRectangle 8">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer
+                                Command="{Binding Source={RelativeSource AncestorType={x:Type vm:PieListViewModel}}, Path=GoToDetailCommand}"
+                                CommandParameter="{Binding .}" />
+                        </Border.GestureRecognizers>
+                        <Grid ColumnDefinitions="*,Auto">
+                            <StackLayout>
+                                <Label Text="{Binding Name}"
+                                       FontSize="18" FontAttributes="Bold" />
+                                <Label Text="{Binding ShortDescription}"
+                                       TextColor="Gray" FontSize="14" />
+                            </StackLayout>
+                            <StackLayout Grid.Column="1" VerticalOptions="Center">
+                                <Label Text="{Binding Price, StringFormat='{0:C}'}"
+                                       FontSize="16" FontAttributes="Bold"
+                                       HorizontalTextAlignment="End" />
+                                <Label Text="Pie of the Week"
+                                       IsVisible="{Binding IsPieOfTheWeek}"
+                                       FontSize="12" TextColor="Orange"
+                                       HorizontalTextAlignment="End" />
+                            </StackLayout>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+</ContentPage>

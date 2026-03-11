@@ -1,0 +1,19 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Pie Shop</title>
+    <!-- TODO: Add Bootstrap CSS reference here (Module H) -->
+</head>
+<body>
+    <!-- TODO: Add a navigation bar here (Module G) -->
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+    <!-- TODO: Add Bootstrap JS reference here (Module H) -->
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

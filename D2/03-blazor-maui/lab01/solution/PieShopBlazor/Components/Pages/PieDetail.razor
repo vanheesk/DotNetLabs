@@ -1,0 +1,54 @@
+@page "/pies/{Id:int}"
+@using PieShopBlazor.Models
+@using PieShopBlazor.Services
+@inject PieApiService PieService
+@inject NavigationManager Navigation
+
+<PageTitle>@(pie?.Name ?? "Pie Details")</PageTitle>
+
+@if (pie is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <h1>@pie.Name</h1>
+
+    <div class="card" style="max-width: 500px;">
+        <div class="card-body">
+            <p>@pie.ShortDescription</p>
+            <hr />
+            <p><strong>Price:</strong> @pie.Price.ToString("C")</p>
+            <p><strong>Category ID:</strong> @pie.CategoryId</p>
+            <p>
+                <strong>Pie of the Week:</strong>
+                @(pie.IsPieOfTheWeek ? "Yes" : "No")
+            </p>
+        </div>
+        <div class="card-footer">
+            <a href="@($"/pies/{pie.PieId}/edit")" class="btn btn-outline-secondary">Edit</a>
+            <button class="btn btn-danger" @onclick="DeletePie">Delete</button>
+            <a href="/pies" class="btn btn-link">Back to list</a>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public int Id { get; set; }
+
+    private Pie? pie;
+
+    protected override async Task OnInitializedAsync()
+    {
+        pie = await PieService.GetByIdAsync(Id);
+    }
+
+    private async Task DeletePie()
+    {
+        var deleted = await PieService.DeleteAsync(Id);
+        if (deleted)
+        {
+            Navigation.NavigateTo("/pies");
+        }
+    }
+}

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:PieShopMaui.ViewModels"
+             x:Class="PieShopMaui.Views.PieDetailPage"
+             x:DataType="vm:PieDetailViewModel"
+             Title="{Binding Pie.Name}">
+
+    <ScrollView Padding="20">
+        <StackLayout Spacing="15">
+            <Border Padding="20" Stroke="LightGray"
+                    StrokeShape="RoundRectangle 8">
+                <StackLayout Spacing="10">
+                    <Label Text="{Binding Pie.Name}"
+                           FontSize="24" FontAttributes="Bold" />
+                    <Label Text="{Binding Pie.ShortDescription}"
+                           FontSize="16" TextColor="Gray" />
+                    <BoxView HeightRequest="1" Color="LightGray" />
+                    <Label Text="{Binding Pie.Price, StringFormat='Price: {0:C}'}"
+                           FontSize="18" />
+                    <Label Text="{Binding Pie.CategoryId, StringFormat='Category: {0}'}"
+                           FontSize="16" />
+                    <Label Text="Pie of the Week!"
+                           IsVisible="{Binding Pie.IsPieOfTheWeek}"
+                           FontSize="16" TextColor="Orange"
+                           FontAttributes="Bold" />
+                </StackLayout>
+            </Border>
+
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                <Button Text="Edit"
+                        Command="{Binding EditCommand}"
+                        BackgroundColor="#0d6efd"
+                        TextColor="White" />
+                <Button Grid.Column="1"
+                        Text="Delete"
+                        Command="{Binding DeleteCommand}"
+                        BackgroundColor="#dc3545"
+                        TextColor="White" />
+            </Grid>
+        </StackLayout>
+    </ScrollView>
+</ContentPage>

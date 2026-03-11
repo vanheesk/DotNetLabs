@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:PieShopMaui.ViewModels"
+             x:Class="PieShopMaui.Views.PieEditPage"
+             x:DataType="vm:PieEditViewModel"
+             Title="{Binding PageTitle}">
+
+    <ScrollView Padding="20">
+        <StackLayout Spacing="15">
+            <Border Padding="20" Stroke="LightGray"
+                    StrokeShape="RoundRectangle 8">
+                <StackLayout Spacing="15">
+                    <StackLayout>
+                        <Label Text="Name" FontAttributes="Bold" />
+                        <Entry Text="{Binding Name}" Placeholder="Enter pie name" />
+                    </StackLayout>
+
+                    <StackLayout>
+                        <Label Text="Description" FontAttributes="Bold" />
+                        <Entry Text="{Binding ShortDescription}"
+                               Placeholder="Short description" />
+                    </StackLayout>
+
+                    <StackLayout>
+                        <Label Text="Price" FontAttributes="Bold" />
+                        <Entry Text="{Binding Price}" Keyboard="Numeric"
+                               Placeholder="0.00" />
+                    </StackLayout>
+
+                    <Grid ColumnDefinitions="*,Auto" Padding="0">
+                        <Label Text="Pie of the Week"
+                               VerticalTextAlignment="Center"
+                               FontAttributes="Bold" />
+                        <Switch Grid.Column="1"
+                                IsToggled="{Binding IsPieOfTheWeek}" />
+                    </Grid>
+
+                    <StackLayout>
+                        <Label Text="Category ID" FontAttributes="Bold" />
+                        <Entry Text="{Binding CategoryId}" Keyboard="Numeric"
+                               Placeholder="1" />
+                    </StackLayout>
+                </StackLayout>
+            </Border>
+
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                <Button Text="Save"
+                        Command="{Binding SaveCommand}"
+                        BackgroundColor="#28a745"
+                        TextColor="White" />
+                <Button Grid.Column="1"
+                        Text="Cancel"
+                        Command="{Binding CancelCommand}"
+                        BackgroundColor="#6c757d"
+                        TextColor="White" />
+            </Grid>
+        </StackLayout>
+    </ScrollView>
+</ContentPage>

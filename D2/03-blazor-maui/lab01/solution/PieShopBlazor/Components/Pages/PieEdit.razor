@@ -1,0 +1,100 @@
+@page "/pies/{Id:int}/edit"
+@using PieShopBlazor.Models
+@using PieShopBlazor.Services
+@inject PieApiService PieService
+@inject NavigationManager Navigation
+
+<PageTitle>Edit Pie</PageTitle>
+
+<h1>Edit Pie</h1>
+
+@if (pie is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="card" style="max-width: 500px;">
+        <div class="card-body">
+            <EditForm Model="@pie" OnValidSubmit="HandleSubmit" FormName="EditPie">
+                <DataAnnotationsValidator />
+                <ValidationSummary class="text-danger" />
+
+                <div class="mb-3">
+                    <label class="form-label">Name</label>
+                    <InputText @bind-Value="pie.Name" class="form-control" />
+                    <ValidationMessage For="() => pie.Name" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Description</label>
+                    <InputText @bind-Value="pie.ShortDescription" class="form-control" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Price</label>
+                    <InputNumber @bind-Value="pie.Price" class="form-control" />
+                    <ValidationMessage For="() => pie.Price" />
+                </div>
+
+                <div class="mb-3 form-check">
+                    <InputCheckbox @bind-Value="pie.IsPieOfTheWeek" class="form-check-input" />
+                    <label class="form-check-label">Pie of the Week</label>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Category ID</label>
+                    <InputNumber @bind-Value="pie.CategoryId" class="form-control" />
+                </div>
+
+                <button type="submit" class="btn btn-primary">Save</button>
+                <a href="@($"/pies/{Id}")" class="btn btn-link">Cancel</a>
+            </EditForm>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public int Id { get; set; }
+
+    [SupplyParameterFromForm]
+    private PieFormModel? pie { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (pie is not null) return;
+
+        var existing = await PieService.GetByIdAsync(Id);
+        if (existing is null)
+        {
+            Navigation.NavigateTo("/pies");
+            return;
+        }
+
+        pie = new PieFormModel
+        {
+            Name = existing.Name,
+            ShortDescription = existing.ShortDescription,
+            Price = existing.Price,
+            IsPieOfTheWeek = existing.IsPieOfTheWeek,
+            CategoryId = existing.CategoryId
+        };
+    }
+
+    private async Task HandleSubmit()
+    {
+        if (pie is null) return;
+
+        var updatedPie = new Pie
+        {
+            PieId = Id,
+            Name = pie.Name,
+            ShortDescription = pie.ShortDescription,
+            Price = pie.Price,
+            IsPieOfTheWeek = pie.IsPieOfTheWeek,
+            CategoryId = pie.CategoryId
+        };
+        await PieService.UpdateAsync(Id, updatedPie);
+        Navigation.NavigateTo($"/pies/{Id}");
+    }
+}

@@ -1,0 +1,58 @@
+@page "/pies"
+@using PieShopBlazor.Models
+@using PieShopBlazor.Services
+@inject PieApiService PieService
+@inject NavigationManager Navigation
+
+<PageTitle>Our Pies</PageTitle>
+
+<h1>Our Pies</h1>
+
+<div class="mb-3">
+    <a href="/pies/add" class="btn btn-success">+ Add New Pie</a>
+</div>
+
+@if (pies is null)
+{
+    <p><em>Loading pies...</em></p>
+}
+else if (pies.Count == 0)
+{
+    <p>No pies found.</p>
+}
+else
+{
+    <div class="row">
+        @foreach (var pie in pies)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">@pie.Name</h5>
+                        <p class="card-text">@pie.ShortDescription</p>
+                        <p class="card-text">
+                            <strong>@pie.Price.ToString("C")</strong>
+                            @if (pie.IsPieOfTheWeek)
+                            {
+                                <span class="badge bg-warning ms-2">Pie of the Week!</span>
+                            }
+                        </p>
+                    </div>
+                    <div class="card-footer">
+                        <a href="@($"/pies/{pie.PieId}")" class="btn btn-primary btn-sm">Details</a>
+                        <a href="@($"/pies/{pie.PieId}/edit")" class="btn btn-outline-secondary btn-sm">Edit</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@code {
+    private List<Pie>? pies;
+
+    protected override async Task OnInitializedAsync()
+    {
+        pies = await PieService.GetAllAsync();
+    }
+}

@@ -1,0 +1,74 @@
+@page "/pies/add"
+@using PieShopBlazor.Models
+@using PieShopBlazor.Services
+@inject PieApiService PieService
+@inject NavigationManager Navigation
+
+<PageTitle>Add a Pie</PageTitle>
+
+<h1>Add a New Pie</h1>
+
+<div class="card" style="max-width: 500px;">
+    <div class="card-body">
+        <EditForm Model="@pie" OnValidSubmit="HandleSubmit" FormName="AddPie">
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" />
+
+            <div class="mb-3">
+                <label class="form-label">Name</label>
+                <InputText @bind-Value="pie!.Name" class="form-control" />
+                <ValidationMessage For="() => pie.Name" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Description</label>
+                <InputText @bind-Value="pie.ShortDescription" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Price</label>
+                <InputNumber @bind-Value="pie.Price" class="form-control" />
+                <ValidationMessage For="() => pie.Price" />
+            </div>
+
+            <div class="mb-3 form-check">
+                <InputCheckbox @bind-Value="pie.IsPieOfTheWeek" class="form-check-input" />
+                <label class="form-check-label">Pie of the Week</label>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Category ID</label>
+                <InputNumber @bind-Value="pie.CategoryId" class="form-control" />
+            </div>
+
+            <button type="submit" class="btn btn-success">Create</button>
+            <a href="/pies" class="btn btn-link">Cancel</a>
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    [SupplyParameterFromForm]
+    private PieFormModel? pie { get; set; }
+
+    protected override void OnInitialized()
+    {
+        pie ??= new();
+    }
+
+    private async Task HandleSubmit()
+    {
+        if (pie is null) return;
+
+        var newPie = new Pie
+        {
+            Name = pie.Name,
+            ShortDescription = pie.ShortDescription,
+            Price = pie.Price,
+            IsPieOfTheWeek = pie.IsPieOfTheWeek,
+            CategoryId = pie.CategoryId
+        };
+        await PieService.CreateAsync(newPie);
+        Navigation.NavigateTo("/pies");
+    }
+}

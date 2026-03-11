@@ -1,0 +1,43 @@
+@model PieShop.Models.Pie
+
+@{
+    ViewData["Title"] = "Create Pie";
+}
+
+<h1>Create a New Pie</h1>
+
+<form asp-action="Create" method="post">
+    <div class="mb-3">
+        <label asp-for="Name" class="form-label"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="ShortDescription" class="form-label"></label>
+        <input asp-for="ShortDescription" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label asp-for="LongDescription" class="form-label"></label>
+        <textarea asp-for="LongDescription" class="form-control" rows="3"></textarea>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Price" class="form-label"></label>
+        <input asp-for="Price" class="form-control" type="number" step="0.01" />
+    </div>
+    <div class="mb-3">
+        <label asp-for="CategoryId" class="form-label">Category</label>
+        <select asp-for="CategoryId" class="form-select">
+            <option value="">-- Select Category --</option>
+            @foreach (var cat in (List<PieShop.Models.Category>)ViewBag.Categories)
+            {
+                <option value="@cat.CategoryId">@cat.Name</option>
+            }
+        </select>
+    </div>
+    <div class="mb-3 form-check">
+        <input asp-for="IsPieOfTheWeek" class="form-check-input" />
+        <label asp-for="IsPieOfTheWeek" class="form-check-label"></label>
+    </div>
+    <button type="submit" class="btn btn-primary">Create</button>
+    <a asp-action="List" class="btn btn-secondary">Cancel</a>
+</form>

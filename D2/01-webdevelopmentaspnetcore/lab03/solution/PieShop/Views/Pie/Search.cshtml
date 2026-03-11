@@ -1,0 +1,90 @@
+@model IEnumerable<PieShop.Models.Pie>
+
+@{
+    ViewData["Title"] = "Search Pies";
+}
+
+<h1>Search Pies</h1>
+
+<form asp-action="Search" method="get" class="row g-3 mb-4">
+    <div class="col-md-3">
+        <label class="form-label">Category</label>
+        <select name="category" class="form-select">
+            <option value="">All Categories</option>
+            @foreach (var cat in (List<string>)ViewBag.Categories)
+            {
+                <option value="@cat" selected="@(ViewBag.Category == cat)">@cat</option>
+            }
+        </select>
+    </div>
+    <div class="col-md-2">
+        <label class="form-label">Max Price</label>
+        <input type="number" name="maxPrice" class="form-control" step="0.01" value="@ViewBag.MaxPrice" />
+    </div>
+    <div class="col-md-2">
+        <label class="form-label">Sort By</label>
+        <select name="sortBy" class="form-select">
+            <option value="">Default</option>
+            <option value="name" selected="@(ViewBag.SortBy == "name")">Name</option>
+            <option value="price" selected="@(ViewBag.SortBy == "price")">Price</option>
+        </select>
+    </div>
+    <div class="col-md-2 d-flex align-items-end">
+        <button type="submit" class="btn btn-primary">Search</button>
+    </div>
+</form>
+
+<div class="alert alert-info">
+    <strong>@ViewBag.TotalCount</strong> pie(s) found.
+    Average price: <strong>@(((decimal)ViewBag.AveragePrice).ToString("c"))</strong>
+</div>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Category</th>
+            <th>Price</th>
+            <th>Pie of the Week</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var pie in Model)
+        {
+            <tr>
+                <td>@pie.Name</td>
+                <td>@pie.Category?.Name</td>
+                <td>@pie.Price.ToString("c")</td>
+                <td>@(pie.IsPieOfTheWeek ? "Yes" : "No")</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@pie.PieId" class="btn btn-sm btn-outline-primary">Details</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@{
+    var totalPages = (int)Math.Ceiling((double)ViewBag.TotalCount / (int)ViewBag.PageSize);
+    var currentPage = (int)ViewBag.CurrentPage;
+}
+
+@if (totalPages > 1)
+{
+    <nav>
+        <ul class="pagination">
+            @for (var i = 1; i <= totalPages; i++)
+            {
+                <li class="page-item @(i == currentPage ? "active" : "")">
+                    <a class="page-link"
+                       asp-action="Search"
+                       asp-route-category="@ViewBag.Category"
+                       asp-route-maxPrice="@ViewBag.MaxPrice"
+                       asp-route-sortBy="@ViewBag.SortBy"
+                       asp-route-page="@i">@i</a>
+                </li>
+            }
+        </ul>
+    </nav>
+}

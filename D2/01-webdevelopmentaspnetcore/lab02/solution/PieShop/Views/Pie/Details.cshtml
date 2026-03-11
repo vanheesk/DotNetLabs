@@ -1,0 +1,25 @@
+@model PieShop.Models.Pie
+
+@{
+    ViewData["Title"] = Model.Name;
+}
+
+<h1>@Model.Name</h1>
+
+<div class="row">
+    <div class="col-md-8">
+        <p class="lead">@Model.ShortDescription</p>
+        <p>@Model.LongDescription</p>
+        <dl class="row">
+            <dt class="col-sm-3">Price</dt>
+            <dd class="col-sm-9">@Model.Price.ToString("c")</dd>
+
+            <dt class="col-sm-3">Category</dt>
+            <dd class="col-sm-9">@Model.Category?.Name</dd>
+
+            <dt class="col-sm-3">Pie of the Week</dt>
+            <dd class="col-sm-9">@(Model.IsPieOfTheWeek ? "Yes" : "No")</dd>
+        </dl>
+        <a asp-action="List" class="btn btn-secondary">Back to list</a>
+    </div>
+</div>

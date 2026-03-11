@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 18
+VisualStudioVersion = 18.3.11520.95 d18.3
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PieShopBlazor", "PieShopBlazor\PieShopBlazor.csproj", "{9DE982F8-7764-9616-4053-0F98EB9D914C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PieShopApi", "PieShopApi\PieShopApi.csproj", "{3C8A20B4-FB22-25CD-878F-C519B8C7353B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9DE982F8-7764-9616-4053-0F98EB9D914C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9DE982F8-7764-9616-4053-0F98EB9D914C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9DE982F8-7764-9616-4053-0F98EB9D914C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9DE982F8-7764-9616-4053-0F98EB9D914C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3C8A20B4-FB22-25CD-878F-C519B8C7353B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3C8A20B4-FB22-25CD-878F-C519B8C7353B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3C8A20B4-FB22-25CD-878F-C519B8C7353B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3C8A20B4-FB22-25CD-878F-C519B8C7353B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A315219F-9D59-467D-B2EE-E872486DCC55}
+	EndGlobalSection
+EndGlobal

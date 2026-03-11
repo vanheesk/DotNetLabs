@@ -1,0 +1,30 @@
+@model PieShop.ViewModels.PiesListViewModel
+
+@{
+    ViewData["Title"] = Model.CurrentCategory;
+}
+
+<h1>@Model.CurrentCategory</h1>
+
+<div class="row">
+    @foreach (var pie in Model.Pies)
+    {
+        <div class="col-sm-6 col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">@pie.Name</h5>
+                    <p class="card-text">@pie.ShortDescription</p>
+                    <p class="card-text"><strong>@pie.Price.ToString("c")</strong></p>
+                    @if (pie.IsPieOfTheWeek)
+                    {
+                        <span class="badge bg-warning text-dark">Pie of the Week!</span>
+                    }
+                </div>
+                <div class="card-footer">
+                    <a asp-action="Details" asp-route-id="@pie.PieId"
+                       class="btn btn-primary btn-sm">View Details</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
