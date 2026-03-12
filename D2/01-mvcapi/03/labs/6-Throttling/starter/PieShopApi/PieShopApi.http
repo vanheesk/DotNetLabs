@@ -1,0 +1,33 @@
+@PieShopApi_HostAddress = https://localhost:7043
+
+### Get all pies (not rate limited)
+GET {{PieShopApi_HostAddress}}/pies
+Accept: application/json
+
+### Get pie by id - call 1
+GET {{PieShopApi_HostAddress}}/pies/1
+Accept: application/json
+
+### Get pie by id - call 2
+GET {{PieShopApi_HostAddress}}/pies/1
+Accept: application/json
+
+### Get pie by id - call 3
+GET {{PieShopApi_HostAddress}}/pies/1
+Accept: application/json
+
+### Get pie by id - call 4
+GET {{PieShopApi_HostAddress}}/pies/1
+Accept: application/json
+
+### Get pie by id - call 5 (queued)
+GET {{PieShopApi_HostAddress}}/pies/1
+Accept: application/json
+
+### Get pie by id - call 6 (queued)
+GET {{PieShopApi_HostAddress}}/pies/1
+Accept: application/json
+
+### Get pie by id - call 7 (should be rejected)
+GET {{PieShopApi_HostAddress}}/pies/1
+Accept: application/json

@@ -1,0 +1,43 @@
+@PieShopApi_HostAddress = https://localhost:7043
+
+### Part 1: Output Cache - first call (5 seconds)
+GET {{PieShopApi_HostAddress}}/datetime/fromoutputcache
+Accept: application/json
+
+### Part 1: Output Cache - second call (instant, cached)
+GET {{PieShopApi_HostAddress}}/datetime/fromoutputcache
+Accept: application/json
+
+### Part 2: Output Cache with header - Foo
+GET {{PieShopApi_HostAddress}}/datetime/fromoutputcache
+Accept: application/json
+X-CacheKey: Foo
+
+### Part 2: Output Cache with header - Bar
+GET {{PieShopApi_HostAddress}}/datetime/fromoutputcache
+Accept: application/json
+X-CacheKey: Bar
+
+### Part 3: Cache Revalidation - first call (note the ETag in response)
+GET {{PieShopApi_HostAddress}}/datetime/fromoutputcacherevalidation
+Accept: application/json
+
+### Part 3: Cache Revalidation - second call with If-None-Match (replace [Etag] with actual ETag value)
+GET {{PieShopApi_HostAddress}}/datetime/fromoutputcacherevalidation
+Accept: application/json
+If-None-Match: "[Etag]"
+
+### Part 4: Cache Eviction - first call
+GET {{PieShopApi_HostAddress}}/datetime/fromoutputcacheeviction
+Accept: application/json
+
+### Part 4: Cache Eviction - second call (cached)
+GET {{PieShopApi_HostAddress}}/datetime/fromoutputcacheeviction
+Accept: application/json
+
+### Part 4: Purge cache by tag
+POST {{PieShopApi_HostAddress}}/datetime/purge/tag-datetime
+
+### Part 4: Cache Eviction - after purge (not cached anymore)
+GET {{PieShopApi_HostAddress}}/datetime/fromoutputcacheeviction
+Accept: application/json

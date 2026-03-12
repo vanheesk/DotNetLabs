@@ -1,0 +1,24 @@
+@PieShopApi_HostAddress = https://localhost:7043
+
+### Part 1a: Request without Accept header (default JSON)
+GET {{PieShopApi_HostAddress}}/pies/1
+
+### Part 1b: Request as JSON
+GET {{PieShopApi_HostAddress}}/pies/1
+Accept: application/json
+
+### Part 1c: Request as XML
+GET {{PieShopApi_HostAddress}}/pies/1
+Accept: application/xml
+
+### Part 2a: Request with unsupported MIME type (returns 406)
+GET {{PieShopApi_HostAddress}}/pies/1
+Accept: text/plain
+
+### Part 3: Request as CSV - single pie
+GET {{PieShopApi_HostAddress}}/pies/1
+Accept: application/csv
+
+### Part 3: Request as CSV - all pies
+GET {{PieShopApi_HostAddress}}/pies
+Accept: application/csv

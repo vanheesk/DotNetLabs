@@ -1,0 +1,5 @@
+﻿@HostAddress = https://localhost:51268
+
+GET {{HostAddress}}/weather
+
+###
